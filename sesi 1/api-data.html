@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Info Negara</title>
+  <style>
+    table { border-collapse: collapse; width: 70%; margin: 20px auto; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+    th { background: #eee; }
+    img { max-width: 120px; }
+    #result { text-align: center; }
+  </style>
+</head>
+<body>
+  <center>
+    <h2>Cari Informasi Negara</h2>
+    <input id="countryInput" placeholder="Contoh: Indonesia" />
+    <button onclick="cariNegara()">Cari</button>
+  </center>
+
+  <div id="result"></div>
+
+  <script>
+    function cariNegara() {
+      const nama = document.getElementById("countryInput").value.trim();
+      if (!nama) return alert("Masukkan nama negara.");
+
+      fetch(`https://restcountries.com/v3.1/name/${encodeURIComponent(nama)}`)
+        .then(res => res.json())
+        .then(data => {
+          const d = data[0];
+          const bahasa = d.languages ? Object.values(d.languages).join(', ') : 'Tidak tersedia';
+          document.getElementById("result").innerHTML = `
+            <table>
+              <tr><th>Nama</th><td>${d.name.common}</td></tr>
+              <tr><th>Populasi</th><td>${d.population.toLocaleString()}</td></tr>
+              <tr><th>Wilayah</th><td>${d.region}</td></tr>
+              <tr><th>Bahasa</th><td>${bahasa}</td></tr>
+              <tr><th>Bendera</th><td><img src="${d.flags.svg}" alt="Bendera"></td></tr>
+            </table>`;
+        })
+        .catch(() => {
+          document.getElementById("result").innerHTML = `<p style="color:red;">Negara tidak ditemukan.</p>`;
+        });
+    }
+  </script>
+</body>
+</html>

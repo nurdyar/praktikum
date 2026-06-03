@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<body style="text-align:center; font-family:sans-serif;">
+
+  <h2> Mengambil data Geolokasi dengan API Google Map dan Alamat IP Perangkat Kita</h2>
+
+  <blockquote>Mengambil data Geolokasi kordinat dan get DOM API maps.google.com untuk menampilkan peta dan Get Alamat IP Perangkat Kita dari API ipify.org</blockquote>
+
+  <p>Klik tombol untuk melihat lokasi di peta dan alamat IP perangkat kamu.</p>
+  <button onclick="getLocation()">Klik untuk mendapatkan titik kordinat dan IP perangkat</button>
+
+  <p id="lokasi"></p>
+  <p id="ip"></p>
+  <div id="map" style="width:100%; height:400px;"></div>
+
+  <script>
+    const lokasi = document.getElementById("lokasi");
+    const ip = document.getElementById("ip");
+    const map = document.getElementById("map");
+
+    function getLocation() {
+      if (!navigator.geolocation) {
+        lokasi.innerText = "Browser tidak mendukung geolokasi.";
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(pos => {
+        const lat = pos.coords.latitude;
+        const lon = pos.coords.longitude;
+
+        lokasi.innerHTML = `Latitude: ${lat}<br>Longitude: ${lon}`;
+        map.innerHTML = `<iframe width="100%" height="400" 
+          src="https://maps.google.com/maps?q=${lat},${lon}&z=15&output=embed" 
+          frameborder="0" allowfullscreen></iframe>`;
+      }, () => {
+        lokasi.innerText = "Tidak bisa mengambil lokasi.";
+      });
+
+      // Ambil IP
+      fetch("https://api.ipify.org?format=json")
+        .then(res => res.json())
+        .then(data => ip.innerText = "IP Anda: " + data.ip)
+        .catch(() => ip.innerText = "Gagal mengambil IP.");
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Info Cuaca</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    #hasil { 
+      margin-top: 20px; 
+      border: 1px solid #ccc; 
+      padding: 20px; 
+      width: 400px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    th, td {
+      text-align: left;
+      padding: 6px;
+    }
+    th {
+      width: 50%;
+    }
+    .big-temp {
+      font-size: 48px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>TUGAS PRAKTIKUM 1</h1>
+
+  <h2>Informasi Cuaca</h2>
+  <input type="text" id="kota" placeholder="Masukkan nama kota">
+  <button onclick="ambilCuaca()">Lihat Cuaca</button>
+
+  <div id="hasil"></div>
+
+  <script>
+    const apiKey = 'b7cfbf7672ca3dc124a4f950ceb813a4'; // Ganti dengan API Key masing-masing
+
+    function ambilCuaca() {
+      const namaKota = document.getElementById("kota").value;
+      const url = `https://api.openweathermap.org/data/2.5/weather?q=${namaKota}&units=metric&appid=${apiKey}&lang=id`;
+
+      fetch(url)
+        .then(response => {
+          if (!response.ok) throw new Error("Kota tidak ditemukan!");
+          return response.json();
+        })
+        .then(data => {
+          const suhu = data.main.temp;
+          const suhuMin = data.main.temp_min;
+          const suhuMax = data.main.temp_max;
+          const cuaca = data.weather[0].description;
+          const kelembaban = data.main.humidity;
+          const tekanan = data.main.pressure;
+          const angin = data.wind.speed;
+          const arahAngin = data.wind.deg;
+          const awan = data.clouds.all;
+          const visibility = data.visibility / 1000; // meter to km
+          const nama = data.name;
+
+          document.getElementById("hasil").innerHTML = `
+            <div>
+              <div class="big-temp">${Math.round(suhu)}°C</div>
+              <strong>${cuaca.charAt(0).toUpperCase() + cuaca.slice(1)}</strong>
+              <table>
+                <tr><th>Kota</th><td>${nama}</td></tr>
+                <tr><th>Suhu Min - Max</th><td>${suhuMin}°C - ${suhuMax}°C</td></tr>
+                <tr><th>Kelembaban</th><td>${kelembaban}%</td></tr>
+                <tr><th>Tekanan</th><td>${tekanan} mb</td></tr>
+                <tr><th>Kecepatan Angin</th><td>${angin} m/s</td></tr>
+                <tr><th>Arah Angin</th><td>${arahAngin}°</td></tr>
+                <tr><th>Tutupan Awan</th><td>${awan}%</td></tr>
+                <tr><th>Jarak Pandang</th><td>${visibility} km</td></tr>
+              </table>
+            </div>
+          `;
+        })
+        .catch(error => {
+          document.getElementById("hasil").innerHTML = `<p style="color:red">${error.message}</p>`;
+        });
+    }
+  </script>
+
+</body>
+</html>
