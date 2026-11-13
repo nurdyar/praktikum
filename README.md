@@ -1,2 +1,2 @@
-# praktikum biji1 
+# praktikum 
 belajar praktikum pemrograman web
